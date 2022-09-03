@@ -47,15 +47,35 @@
             `
             
             document.getElementById('opsDiv').innerHTML = `
-            <p>
+            <p
+            class = "option"
+            data-option='${questions[currentQuestion].options[0]}'
+            data-answer='${questions[currentQuestion].answer}'
+            >
             ${questions[currentQuestion].options[0]}
             </p>
 
-            <p>
+            <p
+            class= "option"
+            data-option='${questions[currentQuestion].options[1]}'
+            data-answer='${questions[currentQuestion].answer}'
+            >
             ${questions[currentQuestion].options[1]}
             </p>
             `
     }
+
+        document.addEventListener('click', event =>{
+            if(event.target.classList.contains('option')) {
+                // console.log(event.target.dataset.option)
+                // console.log(event.target.dataset.answer)
+                if(event.target.dataset.option=event.target.dataset.answer)
+                console.log('You are CORRECT!')
+            }   else {
+                console.log("Incorrect! Try again!")
+            }
+        })
+
         document.getElementById("start").addEventListener('click',event =>{
             document.getElementById("qChoices").classList.remove('hidden')
             displayQuestion()
