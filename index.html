@@ -16,6 +16,7 @@
             <a id="start" class="waves-effect waves-light btn">Start</a>
         </div>
         <div id="qChoices" class ="row hidden">
+        <div id="timer">30</div>
         <div id="questDiv" class="col s12 m6">Questions</div>
         <div id="opsDiv" class="col s12 m6">Options</div>
     </div>
@@ -25,6 +26,8 @@
     <script>
 
         currentQuestion = 0
+        let score = 0
+        let timer = 30
     
         let questions = [
             {
@@ -69,15 +72,26 @@
             if(event.target.classList.contains('option')) {
                 // console.log(event.target.dataset.option)
                 // console.log(event.target.dataset.answer)
-                if(event.target.dataset.option=event.target.dataset.answer)
+                if(event.target.dataset.option==event.target.dataset.answer)
                 console.log('You are CORRECT!')
+                score += 1
+                currentQuestion += 1
+                displayQuestion()
             }   else {
                 console.log("Incorrect! Try again!")
             }
         })
 
-        document.getElementById("start").addEventListener('click',event =>{
+        const timerFunction = () => {
+            timer -= 1     
+            document.getElementById('timer').innerHTML = `
+            ${timer}
+            `
+        }
+
+        document.getElementById("start").addEventListener('click', event =>{
             document.getElementById("qChoices").classList.remove('hidden')
+            setInterval(timerFunction, 1000)
             displayQuestion()
         })
     </script>
