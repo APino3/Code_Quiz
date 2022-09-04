@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="./index.css">
 </head>
 <body>
-<div class="container">
+<div id="box" class="container">
     <div class="row">
         <div class="col s12">
             <h1>Code Quiz</h1>
@@ -17,6 +17,7 @@
         </div>
         <div id="qChoices" class ="row hidden">
         <div id="timer">30</div>
+        <div id="points"></div>
         <div id="questDiv" class="col s12 m6">Questions</div>
         <div id="opsDiv" class="col s12 m6">Options</div>
     </div>
@@ -26,7 +27,7 @@
     <script>
 
         currentQuestion = 0
-        let score = 0
+        let points = 0
         let timer = 30
     
         let questions = [
@@ -68,17 +69,25 @@
             `
     }
 
+    const displayPoints = () => {
+            document.getElementById("points").innerHTML =`
+            Points: ${points}
+            `
+        }
+
         document.addEventListener('click', event =>{
             if(event.target.classList.contains('option')) {
                 // console.log(event.target.dataset.option)
                 // console.log(event.target.dataset.answer)
                 if(event.target.dataset.option==event.target.dataset.answer)
                 console.log('You are CORRECT!')
-                score += 1
+                points += 1
                 currentQuestion += 1
+                displayPoints()
                 displayQuestion()
             }   else {
                 console.log("Incorrect! Try again!")
+                timer -=5
             }
         })
 
@@ -87,11 +96,17 @@
             document.getElementById('timer').innerHTML = `
             ${timer}
             `
+            if (timer < 0) {
+                document.getElementById("box").innerHTML = `
+                <h1>Time Ran out! Game Over! </h1>
+                `
+            }
         }
 
         document.getElementById("start").addEventListener('click', event =>{
             document.getElementById("qChoices").classList.remove('hidden')
             setInterval(timerFunction, 1000)
+            displayPoints()
             displayQuestion()
         })
     </script>
