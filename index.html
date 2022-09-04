@@ -21,6 +21,13 @@
         <div id="questDiv" class="col s12 m6">Questions</div>
         <div id="opsDiv" class="col s12 m6">Options</div>
     </div>
+
+    <div id="enter_name" class="row hidden">
+        <div class="input-field col s6">
+            <input placeholder="Your Name" type="text">
+            <label for="enter_name">Enter Name</label>
+          </div>
+    </div>
 </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
@@ -75,6 +82,15 @@
             `
         }
 
+    const quizCompleted = () => {
+        displayPoints()
+        clearInterval(stopTimer)
+        console.log ('Congratulations! Youve completed the quiz')
+        document.getElementById('questDiv').innerHTML = ''
+        document.getElementById('opsDiv').innerHTML = ''
+        document.getElementById('enter_name').classList.remove('hidden')
+    }
+
         document.addEventListener('click', event =>{
             if(event.target.classList.contains('option')) {
                 // console.log(event.target.dataset.option)
@@ -83,8 +99,13 @@
                 console.log('You are CORRECT!')
                 points += 1
                 currentQuestion += 1
+                if (currentQuestion == questions.length) {
+                    quizCompleted()
+                }   else {
                 displayPoints()
                 displayQuestion()
+                }
+
             }   else {
                 console.log("Incorrect! Try again!")
                 timer -=5
@@ -94,7 +115,7 @@
         const timerFunction = () => {
             timer -= 1     
             document.getElementById('timer').innerHTML = `
-            ${timer}
+            Timer: ${timer}
             `
             if (timer < 0) {
                 document.getElementById("box").innerHTML = `
@@ -103,9 +124,10 @@
             }
         }
 
+        let stopTimer
         document.getElementById("start").addEventListener('click', event =>{
             document.getElementById("qChoices").classList.remove('hidden')
-            setInterval(timerFunction, 1000)
+            stopTimer = setInterval(timerFunction, 1000)
             displayPoints()
             displayQuestion()
         })
