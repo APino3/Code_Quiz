@@ -1,63 +1,68 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
-    <link rel="stylesheet" href="./index.css">
-</head>
-<body>
-<div id="box" class="container">
-    <div class="row">
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css"
+    />
+    <link rel="stylesheet" href="./index.css" />
+  </head>
+  <body>
+    <div id="box" class="container">
+      <div class="row">
         <div class="col s12">
-            <h1>Code Quiz</h1>
-            <a id="start" class="waves-effect waves-light btn">Start</a>
+          <h1>Code Quiz</h1>
+          <a id="start" class="waves-effect waves-light btn">Start</a>
         </div>
-        <div id="qChoices" class ="row hidden">
-        <div id="timer">30</div>
-        <div id="points"></div>
-        <div id="questDiv" class="col s12 m6">Questions</div>
-        <div id="opsDiv" class="col s12 m6">Options</div>
-    </div>
+        <div id="qChoices" class="row hidden">
+          <div id="timer">15</div>
+          <div id="points"></div>
+          <div id="questDiv" class="col s12 m6">Questions</div>
+          <div id="opsDiv" class="col s12 m6">Options</div>
+        </div>
 
-    <div id="enter_name" class="row hidden">
-        <div class="input-field col s6">
-            <input placeholder="Your Name" type="text">
-            <label for="enter_name">Enter Name</label>
+        <div id="enter_name" class="row hidden">
+          <div class="input-field col s6">
+            <input id="newPoints" placeholder="Your Name" type="text" />
+            <label for="first_name">Enter Name</label>
           </div>
+        </div>
+        <a id="submit" class="waves-effect waves-light btn">Submit</a>
+      </div>
+      <div id="points"></div>
     </div>
-</div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
     <script>
+      currentQuestion = 0;
+      let points = 0;
+      let timer = 15;
 
-        currentQuestion = 0
-        let points = 0
-        let timer = 30
-    
-        let questions = [
-            {
-              question:'Example question #1',
-              options:['option 1', 'option 2'],
-              answer: 'option 1'
-            },
-            {
-              question: 'Example question #2',
-              options:['option 1', 'option 2'],
-              answer: ['option 2']
-            },
-    ]
+      let questions = [
+        {
+          question: "Example question #1",
+          options: ["option 1", "option 2"],
+          answer: "option 1",
+        },
+        {
+          question: "Example question #2",
+          options: ["option 1", "option 2"],
+          answer: ["option 2"],
+        },
+      ];
 
-    const displayQuestion = () => {
-            document.getElementById("questDiv").innerHTML = `
+      const displayQuestion = () => {
+        document.getElementById("questDiv").innerHTML = `
             <p>
             ${questions[currentQuestion].question}
             </p>
-            `
-            
-            document.getElementById('opsDiv').innerHTML = `
+            `;
+
+        document.getElementById("opsDiv").innerHTML = `
             <p
             class = "option"
             data-option='${questions[currentQuestion].options[0]}'
@@ -73,64 +78,89 @@
             >
             ${questions[currentQuestion].options[1]}
             </p>
-            `
-    }
+            `;
+      };
 
-    const displayPoints = () => {
-            document.getElementById("points").innerHTML =`
+      const displayPoints = () => {
+        document.getElementById("points").innerHTML = `
             Points: ${points}
-            `
+            `;
+      };
+
+      const quizCompleted = () => {
+        displayPoints();
+        clearInterval(stopTimer);
+        console.log("Congratulations! Youve completed the quiz");
+        document.getElementById("questDiv").innerHTML = "";
+        document.getElementById("opsDiv").innerHTML = "";
+        document.getElementById("enter_name").classList.remove("hidden");
+      };
+
+      document.getElementById("submit").addEventListener("click", (event) => {
+        let newPoints = {
+          time: timer,
+          enter_name: document.getElementById("newPoints").value,
+        };
+        console.log(newPoints);
+        if (localStorage.getItem("scores")) {
+          let points = JSON.parse(localStorage.getItem("points"));
+          points.push(newPoints);
+          localStorage.setItem("points", JSON.stringify(points));
+        } else {
+          let points = [];
+          points.push(newPoints);
+          localStorage.setItem("points", JSON.stringify(points));
         }
+        let points = JSON.parse(localStorage.getItem("points"));
+        points.forEach((points) => {
+          document.getElementById("points").innerHTML += `
+         ${points.enter_name}
+         ${points.time}
+         <hr></hr>
+         `;
+        });
+      });
 
-    const quizCompleted = () => {
-        displayPoints()
-        clearInterval(stopTimer)
-        console.log ('Congratulations! Youve completed the quiz')
-        document.getElementById('questDiv').innerHTML = ''
-        document.getElementById('opsDiv').innerHTML = ''
-        document.getElementById('enter_name').classList.remove('hidden')
-    }
+      document.addEventListener("click", (event) => {
+        if (event.target.classList.contains("option")) {
+          // console.log(event.target.dataset.option)
+          // console.log(event.target.dataset.answer)
+          if (event.target.dataset.option == event.target.dataset.answer)
+            console.log("You are CORRECT!");
+          points += 1;
+          currentQuestion += 1;
+          if (currentQuestion == questions.length) {
+            quizCompleted();
+          } else {
+            displayPoints();
+            displayQuestion();
+          }
+        } else {
+          console.log("Incorrect! Try again!");
+          timer -= 5;
+        }
+      });
 
-        document.addEventListener('click', event =>{
-            if(event.target.classList.contains('option')) {
-                // console.log(event.target.dataset.option)
-                // console.log(event.target.dataset.answer)
-                if(event.target.dataset.option==event.target.dataset.answer)
-                console.log('You are CORRECT!')
-                points += 1
-                currentQuestion += 1
-                if (currentQuestion == questions.length) {
-                    quizCompleted()
-                }   else {
-                displayPoints()
-                displayQuestion()
-                }
-
-            }   else {
-                console.log("Incorrect! Try again!")
-                timer -=5
-            }
-        })
-
-        const timerFunction = () => {
-            timer -= 1     
-            document.getElementById('timer').innerHTML = `
+      const timerFunction = () => {
+        timer -= 1;
+        document.getElementById("timer").innerHTML = `
             Timer: ${timer}
-            `
-            if (timer < 0) {
-                document.getElementById("box").innerHTML = `
-                <h1>Time Ran out! Game Over! </h1>
-                `
-            }
+            `;
+        if (timer < 0) {
+          document.getElementById("box").innerHTML = `
+                <h2>Time Ran out! Game Over! </h2>
+                `;
         }
+      };
 
-        let stopTimer
-        document.getElementById("start").addEventListener('click', event =>{
-            document.getElementById("qChoices").classList.remove('hidden')
-            stopTimer = setInterval(timerFunction, 1000)
-            displayPoints()
-            displayQuestion()
-        })
+      let stopTimer;
+      document.getElementById("start").addEventListener("click", (event) => {
+        document.getElementById("start").classList.add("hidden");
+        document.getElementById("qChoices").classList.remove("hidden");
+        stopTimer = setInterval(timerFunction, 1000);
+        displayPoints();
+        displayQuestion();
+      });
     </script>
-</body>
+  </body>
 </html>
