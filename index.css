@@ -1,3 +1,11 @@
 .hidden {
-    display: none;
+  display: none;
+}
+
+.option {
+  background-color: burlywood;
+}
+
+.question-header {
+  background-color: blue;
 }

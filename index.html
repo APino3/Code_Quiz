@@ -19,7 +19,7 @@
           <a id="start" class="waves-effect waves-light btn">Start</a>
         </div>
         <div id="qChoices" class="row hidden">
-          <div id="timer">15</div>
+          <div id="timer">Time Left: 100</div>
           <div id="points"></div>
           <div id="questDiv" class="col s12 m6">Questions</div>
           <div id="opsDiv" class="col s12 m6">Options</div>
@@ -40,45 +40,38 @@
     <script>
       currentQuestion = 0;
       let points = 0;
-      let timer = 15;
+      let timer = 100;
 
       let questions = [
         {
-          question: "Example question #1",
-          options: ["option 1", "option 2"],
-          answer: "option 1",
+          question: "What is the capital of the United States?",
+          options: ["New York City", "Washington DC", "Atlanta"],
+          answer: "Washington DC",
         },
         {
-          question: "Example question #2",
-          options: ["option 1", "option 2"],
-          answer: ["option 2"],
+          question: "What is the capital of Texas?",
+          options: ["Austin", "Dallas", "Houston"],
+          answer: ["Austin"],
         },
       ];
 
       const displayQuestion = () => {
         document.getElementById("questDiv").innerHTML = `
-            <p>
+            <h3 class='question-header'>
             ${questions[currentQuestion].question}
-            </p>
+            </h3>
             `;
 
-        document.getElementById("opsDiv").innerHTML = `
-            <p
-            class = "option"
-            data-option='${questions[currentQuestion].options[0]}'
-            data-answer='${questions[currentQuestion].answer}'
-            >
-            ${questions[currentQuestion].options[0]}
-            </p>
-
-            <p
-            class= "option"
-            data-option='${questions[currentQuestion].options[1]}'
-            data-answer='${questions[currentQuestion].answer}'
-            >
-            ${questions[currentQuestion].options[1]}
-            </p>
-            `;
+        document.getElementById("opsDiv").innerHTML = questions[
+          currentQuestion
+        ].options.map((opt) => {
+          return `<p  class = "option"
+                            data-option='${opt}'
+                            data-answer='${questions[currentQuestion].answer}' 
+                            onclick='actionClickOption(this.dataset.option, this.dataset.answer)' >
+                              ${opt}
+                        </p>`;
+        });
       };
 
       const displayPoints = () => {
@@ -114,19 +107,22 @@
         let points = JSON.parse(localStorage.getItem("points"));
         points.forEach((points) => {
           document.getElementById("points").innerHTML += `
+          NAME:
          ${points.enter_name}
+         SCORE: 
          ${points.time}
-         <hr></hr>
+         <hr/>
          `;
         });
       });
 
-      document.addEventListener("click", (event) => {
-        if (event.target.classList.contains("option")) {
+      let numOfOptions = document.querySelectorAll(".option").length;
+
+      const actionClickOption = (option, answer) => {
+        if (option == answer) {
           // console.log(event.target.dataset.option)
           // console.log(event.target.dataset.answer)
-          if (event.target.dataset.option == event.target.dataset.answer)
-            console.log("You are CORRECT!");
+          console.log("You are CORRECT!");
           points += 1;
           currentQuestion += 1;
           if (currentQuestion == questions.length) {
@@ -139,14 +135,14 @@
           console.log("Incorrect! Try again!");
           timer -= 5;
         }
-      });
+      };
 
       const timerFunction = () => {
-        timer -= 1;
         document.getElementById("timer").innerHTML = `
-            Timer: ${timer}
+            Time Left: ${timer}
             `;
-        if (timer < 0) {
+        timer -= 1;
+        if (timer <= 0) {
           document.getElementById("box").innerHTML = `
                 <h2>Time Ran out! Game Over! </h2>
                 `;
